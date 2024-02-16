@@ -1,48 +1,68 @@
-var express = require("express")
-var bodyParser = require("body-parser")
-var mongoose = require("mongoose")
+const express = require('express');
+const cors = require('cors');
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+const app = express();
+const port = 3000;
 
-const app = express()
+app.use(cors());
+app.use(bodyParser.json());
 
-app.use(bodyParser.json())
-app.use(express.static('public'))
-app.use(bodyParser.urlencoded({
-    extended: true
-}))
+mongoose.connect('mongodb+srv://rizka96:rizka96@cluster0.trvnxb1.mongodb.net/hw_test?retryWrites=true&w=majority')
+  .then(() => console.log('MongoDB connected'))
+  .catch(err => console.error('MongoDB connection error:', err));
 
-mongoose.connect('mongodb://0.0.0.0:27017/mydb', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
+
+  const userSchema = new mongoose.Schema({
+    email: String,
+    password: String
+  });
+
+  const User = mongoose.model('User', userSchema);
+
+
+app.get('/', (req, res) => {
+  res.send('Hello, World!');
 });
-var db = mongoose.connection;
 
-db.on('error', () => console.log("Error in Connecting to Database"));
-db.once('open', () => console.log("Connected to Database"));
-app.post("/sign_up", (req, res) => {
-    var name = req.body.name;
-    var email = req.body.email;
-    var phone = req.body.phone;
-    var password = req.body.password;
-    var data = {
-        "name": name,
-        "email": email,
-        "phone": phone,
-        "password": password
+app.post('/login', async (req, res) => {
+    // Assuming the client sends email and password in the request body
+    const { email, password } = req.body;
+    console.log(email, password)
+  
+    try {
+        // Create a new user instance
+        const newUser = new User({
+          email: email,
+          password: password
+        });
+
+        // Save the user to the database
+        await newUser.save();
+
+        const response = {
+          success: true,
+          msg: 'User registered successfully'
+        };
+        res.json(response);
+    } catch (error) {
+        console.error('Error registering user:', error);
+        const response = {
+          success: false,
+          msg: 'Failed to register user'
+        };
+        res.status(500).json(response);
     }
-    db.collection('users').insertOne(data, (err, collection) => {
-        if (err) throw err;
-        console.log("Record Inserted Successfully");
-    });
-    return res.redirect('signup_success.html');
+});
 
-})
+  app.get('/register', (req, res) => {
+    const response = {
+        success: true,
+        msg: 'register'
+    }
+    res.json(response);
+  });
 
-app.get("/", (req, res) => {
-    res.set({
-        "Allow-access-Allow-Origin": '*'
-    })
-    return res.redirect('index.html');
-
-}).listen(3000);
-
-console.log("Listening on Port 3000");
+app.listen(port, () => {
+  console.log(`Server is listening at http://localhost:${port}`);
+});
