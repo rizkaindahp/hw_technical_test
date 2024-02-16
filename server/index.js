@@ -21,12 +21,12 @@ db.once('open', () => console.log("Connected to Database"));
 app.post("/sign_up", (req, res) => {
     var name = req.body.name;
     var email = req.body.email;
-    var phno = req.body.phno;
+    var phone = req.body.phone;
     var password = req.body.password;
     var data = {
         "name": name,
         "email": email,
-        "phno": phno,
+        "phone": phone,
         "password": password
     }
     db.collection('users').insertOne(data, (err, collection) => {
