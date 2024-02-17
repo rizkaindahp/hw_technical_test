@@ -156,7 +156,18 @@ document.addEventListener("DOMContentLoaded", function () {
         password: password,
       });
       // Handle success
+      swal({
+        title: "Success!",
+        text: "Sign Up Success",
+        icon: "success",
+        timer: 1000, // 3000 milliseconds (3 seconds)
+        buttons: false,
+        showCloseButton: false,
+        timerProgressBar: true, // Enable progress bar
+      });
       console.log(response.data);
+      // After registration success, trigger login
+      // login(email, password);
     } catch (error) {
       // Handle error
       console.error(error);
