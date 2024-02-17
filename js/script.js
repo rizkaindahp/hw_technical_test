@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Check if email is valid
     var email = document.getElementById("email").value;
     if (!validateEmail(email)) {
+      
       swal({
         title: "warning!",
         text: "Please enter a valid email address",
@@ -37,6 +38,7 @@ document.addEventListener("DOMContentLoaded", function () {
       event.preventDefault();
       return;
     }
+    
 
     login(email, password);
 
@@ -136,6 +138,7 @@ document.addEventListener("DOMContentLoaded", function () {
         password: password,
       });
       // Handle success
+      window.location.href = '/public/home.html';
       console.log(response.data);
     } catch (error) {
       // Handle error

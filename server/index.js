@@ -29,32 +29,29 @@ app.get("/", (req, res) => {
 });
 
 app.post("/login", async (req, res) => {
-  // Assuming the client sends email and password in the request body
   const { email, password } = req.body;
   console.log(email, password);
 
   try {
-    // Create a new user instance
-    const loginUser = new User({
-      email: email,
-      password: password,
-    });
+    // Find user by email
+    const user = await User.findOne({ email });
 
-    // Save the user to the database
-    await loginUser.save();
+    if (!user) {
+      return res.status(404).json({ success: false, msg: "User not found" });
+    }
 
-    const response = {
-      success: true,
-      msg: "User login successfully",
-    };
-    res.json(response);
+    // Compare passwords
+    const isMatch = password === user.password;
+
+    if (isMatch) {
+      // Passwords match, create session or token and send success response
+      return res.json({ success: true, msg: "User logged in successfully" });
+    } else {
+      return res.status(401).json({ success: false, msg: "Invalid credentials" });
+    }
   } catch (error) {
-    console.error("Error registering user:", error);
-    const response = {
-      success: false,
-      msg: "Failed to register user",
-    };
-    res.status(500).json(response);
+    console.error("Error logging in user:", error);
+    return res.status(500).json({ success: false, msg: "Failed to log in user" });
   }
 });
 
