@@ -58,7 +58,7 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.get("/register", async (req, res) => {
+app.post("/register", async (req, res) => {
   // Assuming the client sends email and password in the request body
   const { name, email, phone, password } = req.body;
   console.log(name, email, phone, password,);
